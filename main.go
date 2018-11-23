@@ -24,10 +24,10 @@ var replacements = []struct {
 	repl string
 }{
 	{regexp.MustCompile(`(((long|int) )+)unsigned\s*`), "unsigned ${1}"},
-	{regexp.MustCompile(`(\s+)long\s+int(\s+)`), "${1}int${2}"},
-	{regexp.MustCompile(`(\s+)unsigned\s+long\s+long(\s+)`), "${1}uint64_t${2}"},
-	{regexp.MustCompile(`(\s+)long\s+long(\s+)`), "${1}int64_t${2}"},
-	{regexp.MustCompile(`(\s+)long(\s+)`), "${1}int${2}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long\s+int(?P<r>(\s|\))+)`), "${l}int${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)unsigned\s+long\s+long(?P<r>(\s|\))+)`), "${l}uint64_t${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long\s+long(?P<r>(\s|\))+)`), "${l}int64_t${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long(?P<r>(\s|\))+)`), "${l}int${r}"},
 }
 
 var skipDirs = []*regexp.Regexp{}
