@@ -24,10 +24,11 @@ var replacements = []struct {
 	repl string
 }{
 	{regexp.MustCompile(`(((long|int) )+)unsigned\s*`), "unsigned ${1}"},
-	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long\s+int(?P<r>(\s|\))+)`), "${l}int${r}"},
-	{regexp.MustCompile(`(?P<l>(^|\s|\()+)unsigned\s+long\s+long(?P<r>(\s|\))+)`), "${l}uint64_t${r}"},
-	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long\s+long(?P<r>(\s|\))+)`), "${l}int64_t${r}"},
-	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long(?P<r>(\s|\))+)`), "${l}int${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long\s+int(?P<r>(\s|[)*])+)`), "${l}int${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)unsigned\s+long\s+long(?P<r>(\s|[)*])+)`), "${l}uint64_t${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long\s+long(?P<r>(\s|[)*])+)`), "${l}int64_t${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long(?P<r>(\s|[)*])+)`), "${l}int${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)int64_t(?P<r>(\s|[)*])+)`), "${l}long long${r}"},
 }
 
 var skipDirs = []*regexp.Regexp{}
@@ -68,7 +69,12 @@ func processFile(path string) error {
 }
 
 func main() {
-	err := filepath.Walk("fs", func(path string, info os.FileInfo, err error) error {
+	if len(os.Args) < 2 {
+		fmt.Println("which directory to process")
+		os.Exit(1)
+	}
+
+	err := filepath.Walk(os.Args[1], func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
