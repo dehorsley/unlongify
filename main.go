@@ -29,6 +29,7 @@ var replacements = []struct {
 	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long\s+long(?P<r>(\s|[)*])+)`), "${l}int64_t${r}"},
 	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long(?P<r>(\s|[)*])+)`), "${l}int${r}"},
 	{regexp.MustCompile(`(?P<l>(^|\s|\()+)int64_t(?P<r>(\s|[)*])+)`), "${l}long long${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)uint64_t(?P<r>(\s|[)*])+)`), "${l}unsigned long long${r}"},
 }
 
 var skipDirs = []*regexp.Regexp{}

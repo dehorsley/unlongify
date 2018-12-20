@@ -1,5 +1,8 @@
 package main
 
+// Scans C source code extracting code, strings, and comments
+// maybe should handle preprocessor macros too, but FS source doesnt make too much use of them
+
 import (
 	"fmt"
 	"strings"
