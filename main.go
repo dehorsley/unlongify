@@ -89,7 +89,7 @@ func main() {
 		}
 
 		ext := filepath.Ext(info.Name())
-		if ext != ".c" && ext != ".h" {
+		if ext != ".c" && ext != ".h" && ext != ".cpp" && ext != ".hpp" {
 			return nil
 		}
 
