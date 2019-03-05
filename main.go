@@ -19,17 +19,23 @@ func matches(path string, res []*regexp.Regexp) bool {
 
 }
 
-var replacements = []struct {
+type replacement struct {
 	pat  *regexp.Regexp
 	repl string
-}{
+}
+
+var codeReplacements = []replacement{
 	{regexp.MustCompile(`(((long|int) )+)unsigned\s*`), "unsigned ${1}"},
-	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long\s+int(?P<r>(\s|[)*])+)`), "${l}int${r}"},
-	{regexp.MustCompile(`(?P<l>(^|\s|\()+)unsigned\s+long\s+long(?P<r>(\s|[)*])+)`), "${l}uint64_t${r}"},
-	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long\s+long(?P<r>(\s|[)*])+)`), "${l}int64_t${r}"},
-	{regexp.MustCompile(`(?P<l>(^|\s|\()+)long(?P<r>(\s|[)*])+)`), "${l}int${r}"},
-	{regexp.MustCompile(`(?P<l>(^|\s|\()+)int64_t(?P<r>(\s|[)*])+)`), "${l}long long${r}"},
-	{regexp.MustCompile(`(?P<l>(^|\s|\()+)uint64_t(?P<r>(\s|[)*])+)`), "${l}unsigned long long${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\(|,)+)long\s+int(?P<r>(\s|[)*])+)`), "${l}int${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\(|,)+)unsigned\s+long\s+long(?P<r>(\s|[)*])+)`), "${l}TMP_uint64_t${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\(|,)+)long\s+long(?P<r>(\s|[)*])+)`), "${l}TMP_int64_t${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\(|,)+)long(?P<r>(\s|[)*])+)`), "${l}int${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)TMP_int64_t(?P<r>(\s|[)*])+)`), "${l}long long${r}"},
+	{regexp.MustCompile(`(?P<l>(^|\s|\()+)TMP_uint64_t(?P<r>(\s|[)*])+)`), "${l}unsigned long long${r}"},
+}
+
+var stringReplacements = []replacement{
+	{regexp.MustCompille(`(?P<l>%(?P<flag>[-+ 0#'I]*)(?P<width>\*?\d*\$?)(?P<precision>\.\*?\d*\$?)?)l?(?P<r>[idouxX])`), "${l}${r}"},
 }
 
 var skipDirs = []*regexp.Regexp{}
@@ -45,13 +51,18 @@ func processFile(path string) error {
 	_, items := lex(string(s))
 
 	for i := range items {
-		line := i.val
-		if i.typ == itemCode {
-			for _, r := range replacements {
-				line = r.pat.ReplaceAllString(line, r.repl)
+		s := i.val
+		switch i.typ {
+		case itemCode:
+			for _, r := range codeReplacements {
+				s = r.pat.ReplaceAllString(s, r.repl)
+			}
+		case itemString:
+			for _, r := range stringReplacements {
+				s = r.pat.ReplaceAllString(s, r.repl)
 			}
 		}
-		b.WriteString(line)
+		b.WriteString(s)
 	}
 
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_TRUNC, 0755)
