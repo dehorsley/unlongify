@@ -81,11 +81,11 @@ func processFile(path string) error {
 }
 
 const usage = `
-usage: unlong <PATH>
+usage: unlongify <PATH>
 
 Eg:
 
-	unlong /usr2/st
+	unlongify /usr2/st
 
 This recursively scans a directory tree for C source files and headers and
 modifies them to change "long" type declarations to "int". Care is taken to
