@@ -81,34 +81,34 @@ func processFile(path string) error {
 }
 
 const usage = `
-usage: longs <PATH>
+usage: unlong <PATH>
 
 Eg:
 
-	longs /usr2/st
+	unlong /usr2/st
 
 This recursively scans a directory tree for C source files and headers and
 modifies them to change "long" type declarations to "int". Care is taken to
 avoid false positives elsewhere in the source. Printf/scanf format options
 are also updated to use "int".
 
-This tool is aimed at updating 32-bit (x86) to dual 32/64-bit (x86/x86_64)
-code. GCC on x86 processors compiles both "int" and "long" to 32-bit
-integers, whereas on x86_64 "int" compiles to 32-bit and "long" compiles
-to 64-bit.
+This tool aimed at updating 32-bit x86 C code to dual 32/64-bit
+(x86/x86_64) code. GCC on x86 processors compiles both "int" and "long" to
+32-bit integers, whereas on x86_64 "int" compiles to 32-bit and "long"
+compiles to 64-bit. The tool doesn't really understand C, and should be 
+treated at a blunt object to get the code close to correct.
 
 Users writing modern code should consider updating any program interfaces
 to use fixed width integers defined in "stdint.h". This is more portable
 between compilers and architectures.
 
-Note: not all longs are bad. Some system calls require and return "long"
-arguments. Of particular note is "mtype" field in the struct argument to
-"msgrcv" must be of type "long". THIS TOOL WILL BLINDLY CONVERT THESE TO
-"ints"!
+Note: not all longs are bad, specifically some system calls explicitly
+require and return "long" arguments. Of particular note is "mtype" field in
+the struct argument to "msgrcv" must be of type "long". THIS TOOL WILL
+BLINDLY CONVERT THESE TO "ints"!
 
 Users should check their code after using this tool. Modern versions of GCC
-will warn at least some so check the compilers output.
-
+will warn in at least some cases check the compilers output.
 
 WARNING: this does not make backups before editing files
 `
