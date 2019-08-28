@@ -1,12 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 )
 
 func matches(path string, res []*regexp.Regexp) bool {
@@ -41,7 +41,7 @@ var stringReplacements = []replacement{
 var skipDirs = []*regexp.Regexp{}
 
 func processFile(path string) error {
-	b := &strings.Builder{}
+	var b bytes.Buffer
 
 	s, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -71,7 +71,7 @@ func processFile(path string) error {
 	}
 	defer f.Close()
 
-	_, err = f.WriteString(b.String())
+	_, err = b.WriteTo(f)
 
 	if err != nil {
 		return fmt.Errorf("error writing to file %s: %v", path, err)
