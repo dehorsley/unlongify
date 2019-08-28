@@ -3,7 +3,16 @@ Unlongify
 
 A stupid little tool to port legacy C to x86/x86-64. 
 
-Usage:
+Installation
+------------
+
+If you have [Go](https://golang.org) installed, and `$GOPATH/bin` in your PATH, 
+just run
+
+    go get github.com/dehorsley/unlongify
+
+Usage
+-----
 
 
     unlongify <PATH>
