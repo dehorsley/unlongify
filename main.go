@@ -45,7 +45,7 @@ func processFile(path string) error {
 
 	s, err := ioutil.ReadFile(path)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("error reading file %s: %v", path, err)
 	}
 
 	_, items := lex(string(s))
@@ -67,14 +67,14 @@ func processFile(path string) error {
 
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_TRUNC, 0755)
 	if err != nil {
-		return err
+		return fmt.Errorf("error opening file %s for writing: %v", path, err)
 	}
 	defer f.Close()
 
 	_, err = f.WriteString(b.String())
 
 	if err != nil {
-		return err
+		return fmt.Errorf("error writing to file %s: %v", path, err)
 	}
 
 	return nil
