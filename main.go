@@ -61,6 +61,8 @@ func processFile(path string) error {
 			for _, r := range stringReplacements {
 				s = r.pat.ReplaceAllString(s, r.repl)
 			}
+		case itemError:
+			return fmt.Errorf("error processing file %s: %s", path, i.val)
 		}
 		b.WriteString(s)
 	}

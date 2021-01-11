@@ -88,6 +88,11 @@ func (l *lexer) emit(t itemType) {
 	l.start = l.pos
 }
 
+func (l *lexer) Error(val string) {
+	l.items <- item{itemError, val}
+	l.start = l.pos
+}
+
 func (l *lexer) next() (r rune) {
 	if l.pos >= len(l.input) {
 		l.width = 0
@@ -146,7 +151,8 @@ func lexLongComment(l *lexer) stateFn {
 			break
 		}
 		if l.next() == eof {
-			panic("eof while scanning long comment")
+			l.Error(fmt.Sprintf("Comment starting at pos %d never terminated", l.pos))
+			return nil
 		}
 	}
 	l.pos += len(longCommentEnd)
