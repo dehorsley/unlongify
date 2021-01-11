@@ -121,7 +121,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	err := filepath.Walk(os.Args[1], func(path string, info os.FileInfo, err error) error {
+	root := os.Args[1]
+
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -143,7 +145,7 @@ func main() {
 	})
 
 	if err != nil {
-		fmt.Printf("error walking the path %q: %v\n", "fs", err)
+		fmt.Printf("error processing path %q: %v\n", root, err)
 		return
 	}
 
